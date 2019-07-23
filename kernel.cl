@@ -39,7 +39,7 @@ static inline int buried_treasure_at(long world_seed, int x, int z) {
   return random_next(&r, 24) < 167773;
 }
 
-__kernel void main(ulong offset, ulong stride, __global __write_only ulong *seeds, __global __write_only ushort *ret) {
+__kernel void start(ulong offset, ulong stride, __global ulong *seeds, __global ushort *ret) {
   size_t id = get_global_id(0);
   uchar max_count = 0;
   uchar max_last = 0;
@@ -49,9 +49,9 @@ __kernel void main(ulong offset, ulong stride, __global __write_only ulong *seed
     uchar last = 0;
     ulong worldSeed = seed_base | i;
     //to modify
-   /* if (!buried_treasure_at(worldSeed, 0, 0)) continue;
-    if (!temple_at(worldSeed, 14357617, 0, 0)) continue;
-    if (!monument_at(worldSeed, 0, 0)) continue;*/
+    if (!monument_at(worldSeed, -188,-205)) continue;
+    if (!temple_at(worldSeed, 14357617, -235,-214)) continue;
+    if (!buried_treasure_at(worldSeed,-224,-247)) continue;
     max_count++;
     seeds[id] = worldSeed;
   }

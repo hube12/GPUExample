@@ -147,26 +147,24 @@ static inline void check(cl_int code, char *prefix) {
 }
 
 static inline char *readFile(const char *name) {
-  size_t size = 100;
-  char *s = malloc(size + 1);
-  if (!s) return s;
-  FILE *file = fopen(name, "r");
-  if (!file) return NULL;
-  size_t offset = 0;
-  while (!feof(file)) {
-    if (offset >= size) {
-      size += 100;
-      s = realloc(s, size + 1);
-      if (!s) {
-        fclose(file);
-        return s;
-      }
+    FILE *fp;
+    char *source_str;
+    size_t program_size;
+
+    fp = fopen(name, "rb");
+    if (!fp) {
+        printf("Failed to load kernel\n");
+        return NULL;
     }
-    offset += fread(s + offset, 1, size - offset, file);
-  }
-  fclose(file);
-  s[offset] = 0;
-  return s;
+
+    fseek(fp, 0, SEEK_END);
+    program_size = ftell(fp);
+    rewind(fp);
+    source_str = (char*)malloc(program_size + 1);
+    source_str[program_size] = '\0';
+    fread(source_str, sizeof(char), program_size, fp);
+    fclose(fp);
+    return source_str;
 }
 
 static inline char *getBuildLog(cl_program program, cl_device_id device) {
