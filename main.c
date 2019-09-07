@@ -7,11 +7,7 @@
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 
-#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
-
 #include <CL/cl.h>
-#include <gdcache.h>
-#include <glob.h>
 
 #define CLEAR_LINE "\x1b[K"
 
@@ -62,7 +58,7 @@ int main(int argc, char **argv) {
 
         printf("  %d available devices:\n", num_devices);
         for (int j = 0; j < num_devices; j++) {
-            device_info *infos = getDeviceInfo(devices[i]);
+            device_info *infos = getDeviceInfo(devices[j]);
             printf("    %s\n", infos->info_str);
             if (infos->compute_units >= cus) {
                 cus = infos->compute_units;
