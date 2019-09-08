@@ -6,7 +6,6 @@
 #include <errno.h>
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
-#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
 #include <CL/cl.h>
 
 #define CLEAR_LINE "\x1b[K"
@@ -78,7 +77,7 @@ int main(int argc, char **argv) {
     device_info *info = getDeviceInfo(device);
     printf("Using %s\n", info->info_str);
     free(info);
-    cl_command_queue queue = clCreateCommandQueue(context, device, 0, NULL);
+    cl_command_queue queue = clCreateCommandQueueWithProperties(context, device, 0, NULL);
 
     const char *header_names[] = {"jrand.cl"};
     cl_int error;
@@ -128,7 +127,7 @@ int main(int argc, char **argv) {
     size_t nstep = 1LLU << min(x2step, x2total);
     uint64_t stride = 1LLU << (48U - x2total);
 
-    printf("Total: %lu, step: %lu, stride: %lu\n", ntotal, nstep, stride);
+    printf("Total: %llu, step: %llu, stride: %llu\n", ntotal, nstep, stride);
 
     cl_mem mem_seeds = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(cl_ulong) * nstep, NULL, NULL);
     cl_mem mem_output = clCreateBuffer(context, CL_MEM_READ_WRITE, sizeof(cl_ushort) * nstep, NULL, NULL);
@@ -151,7 +150,7 @@ int main(int argc, char **argv) {
 
     FILE *log_file = fopen("out.txt", "w");
     if (!log_file) perror("Error opening logfile");
-
+	printf("Work Load possible: %d %d %d \n",CL_DEVICE_MAX_WORK_GROUP_SIZE,CL_DEVICE_MAX_WORK_ITEM_SIZES,CL_DEVICE_LOCAL_MEM_SIZE);
     uint64_t t = start_timer();
     for (size_t offset = 0; offset < ntotal; offset += nstep) {
         for (size_t i = 0; i < nstep; i++) seeds[i] = offset + i;
@@ -172,7 +171,7 @@ int main(int argc, char **argv) {
         for (size_t i = 0; i < nstep; i++) {
             uint8_t count = output[i] >> 8u;
             if (count > 0) {
-                fprintf(log_file, "%016lx\n", seeds[i]);
+                fprintf(log_file, "%016llx\n", seeds[i]);
                 //printf("\r%016lx%s\n", seeds[i], CLEAR_LINE);
             }
         }
@@ -181,7 +180,7 @@ int main(int argc, char **argv) {
         double per_item = (double) d / (offset + nstep);
         double eta = ((double) d / ((offset + nstep) * 1000000000.)) * (ntotal - offset - nstep);
         uint64_t d2ms = d2 / 1000000;
-        printf("  %fs / %lu items = %lfns/item, %lums/batch, ETA: %lfs (%dh%dm%ds)", d / 1000000000.f, offset + nstep,
+        printf("  %fs / %llu items = %lfns/item, %llums/batch, ETA: %lfs (%dh%dm%ds)", d / 1000000000.f, offset + nstep,
                per_item, d2ms, eta,
                (int) (eta / 3600), ((int) (eta / 60)) % 60, ((int) eta) % 60);
         /*
@@ -212,7 +211,7 @@ int main(int argc, char **argv) {
     uint64_t d = stop_timer(t);
     fclose(log_file);
 
-    printf("%fs / %lu items = %lfns/item\n", d / 1000000000.f, ntotal, (double) d / ntotal);
+    printf("%fs / %llu items = %lfns/item\n", d / 1000000000.f, ntotal, (double) d / ntotal);
     // fclose(f);
     return 0;
 }
