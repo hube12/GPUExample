@@ -6,7 +6,7 @@
 #include <errno.h>
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
-
+#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
 #include <CL/cl.h>
 
 #define CLEAR_LINE "\x1b[K"
