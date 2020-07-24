@@ -89,13 +89,13 @@ __kernel void start(ulong offset, ulong stride, __global ulong *seeds, __global 
     uchar last = 0;
     ulong worldSeed = seed_base | i;
     //to modify
-    if (!end_city_at(worldSeed, -945 -1993)) continue;
-    if (!end_city_at(worldSeed, -966 -2019)) continue;
-    if (!end_city_at(worldSeed, -1079 -2073)) continue;
-    if (!end_city_at(worldSeed, -1086 -2147)) continue;
-    if (!end_city_at(worldSeed, -1097 -2215)) continue;
-    if (!end_city_at(worldSeed, -1096 -2260)) continue;
-    if (!end_city_at(worldSeed, -1113 -2368)) continue;
+    if (!end_city_at(worldSeed, -945 ,-1993)) continue;
+    if (!end_city_at(worldSeed, -966 ,-2019)) continue;
+    if (!end_city_at(worldSeed, -1079, -2073)) continue;
+    if (!end_city_at(worldSeed, -1086, -2147)) continue;
+    if (!end_city_at(worldSeed, -1097, -2215)) continue;
+    if (!end_city_at(worldSeed, -1096, -2260)) continue;
+    if (!end_city_at(worldSeed, -1113, -2368)) continue;
     max_count++;
     seeds[id] = worldSeed;
   }
