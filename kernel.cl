@@ -65,6 +65,19 @@ static inline int fortress_at(ulong world_seed, int x, int z) {
     return 1;
 }
 
+static inline int end_city_at(ulong world_seed, int x, int z) {
+    int rSize = 20;
+    int rSep = 11;
+    int constrained_x = x < 0 ? x - rSize + 1 : x;
+    int constrained_z = z < 0 ? z - rSize + 1 : z;
+    int rx = constrained_x / rSize;
+    int rz = constrained_z / rSize;
+    Random r = get_random_with_structure_seed(world_seed, rx, rz, 10387313);
+    if ((random_next_int(&r, rSize - rSep) + random_next_int(&r, rSize - rSep)) / 2 != x - rx * rSize) return 0;
+    if ((random_next_int(&r, rSize - rSep) + random_next_int(&r, rSize - rSep)) / 2 != z - rz * rSize) return 0;
+    return 1;
+}
+
 
 __kernel void start(ulong offset, ulong stride, __global ulong *seeds, __global ushort *ret) {
   size_t id = get_global_id(0);
@@ -76,13 +89,13 @@ __kernel void start(ulong offset, ulong stride, __global ulong *seeds, __global 
     uchar last = 0;
     ulong worldSeed = seed_base | i;
     //to modify
-    if (!bastion_remnant_at(worldSeed, -945 -1993)) continue;
-    if (!bastion_remnant_at(worldSeed, -966 -2019)) continue;
-    if (!bastion_remnant_at(worldSeed, -1079 -2073)) continue;
-    if (!bastion_remnant_at(worldSeed, -1086 -2147)) continue;
-    if (!bastion_remnant_at(worldSeed, -1097 -2215)) continue;
-    if (!bastion_remnant_at(worldSeed, -1096 -2260)) continue;
-    if (!bastion_remnant_at(worldSeed, -1113 -2368)) continue;
+    if (!end_city_at(worldSeed, -945 -1993)) continue;
+    if (!end_city_at(worldSeed, -966 -2019)) continue;
+    if (!end_city_at(worldSeed, -1079 -2073)) continue;
+    if (!end_city_at(worldSeed, -1086 -2147)) continue;
+    if (!end_city_at(worldSeed, -1097 -2215)) continue;
+    if (!end_city_at(worldSeed, -1096 -2260)) continue;
+    if (!end_city_at(worldSeed, -1113 -2368)) continue;
     max_count++;
     seeds[id] = worldSeed;
   }
