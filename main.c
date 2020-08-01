@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
         for (int j = 0; j < num_devices; j++) {
             device_info *infos = getDeviceInfo(devices[j]);
             printf("    %s\n", infos->info_str);
-            if (infos->compute_units >= cus) {
+            if (infos->compute_units >cus && (strstr(infos->info_str,"NVIDIA")||strstr(infos->info_str,"AMD"))) {
                 cus = infos->compute_units;
                 device = devices[j];
             }
@@ -215,3 +215,4 @@ int main(int argc, char **argv) {
     // fclose(f);
     return 0;
 }
+
