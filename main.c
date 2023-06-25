@@ -50,8 +50,15 @@ int main(int argc, char **argv) {
         printf("%d: %s\n", i, info);
         free(info);
         cl_uint num_devices;
-        check(clGetDeviceIDs(platforms[i], TYPE, 0, NULL, &num_devices), "getDeviceIDs (num)");
-
+        cl_int code = clGetDeviceIDs(platforms[i], TYPE, 0, NULL, &num_devices);
+        if (code == CL_DEVICE_NOT_FOUND) {
+            printf("  No available devices\n");
+            break;
+        }
+        else{
+          check(code, "getDeviceIDs (num)");
+        }
+          
         cl_device_id devices[num_devices];
         check(clGetDeviceIDs(platforms[i], TYPE, num_devices, devices, NULL), "getDeviceIDs");
 
@@ -59,7 +66,7 @@ int main(int argc, char **argv) {
         for (int j = 0; j < num_devices; j++) {
             device_info *infos = getDeviceInfo(devices[j]);
             printf("    %s\n", infos->info_str);
-            if (infos->compute_units >cus && (strstr(infos->info_str,"NVIDIA")||strstr(infos->info_str,"AMD"))) {
+            if (infos->compute_units >cus && (strstr(infos->info_str,"NVIDIA")||strstr(infos->info_str,"AMD")||strstr(infos->info_str,"Advanced Micro Devices"))) {
                 cus = infos->compute_units;
                 device = devices[j];
             }
